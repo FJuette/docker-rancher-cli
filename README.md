@@ -35,7 +35,7 @@ deploy:
   image: fjuette/docker-rancher-cli
   script:
     - rancher login $RANCHER_URL -t $RANCHER_TOKEN --context c-vttdp:p-1a2bc
-    - rancher kubectl patch deployment hiwi-ng -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}}}}}"
+    - rancher kubectl patch deployment deploy-name -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}}}}}"
   only:
     - master
 ```

@@ -1,4 +1,4 @@
-FROM phusion/baseimage:jammy-1.0.1
+FROM phusion/baseimage:noble-1.0.0
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -7,12 +7,16 @@ CMD ["/sbin/my_init"]
 RUN mkdir /cli
 WORKDIR /cli
 RUN apt-get update && apt-get install -y wget apt-transport-https
-RUN wget https://github.com/rancher/cli/releases/download/v2.7.0/rancher-linux-amd64-v2.7.0.tar.gz
+RUN wget https://github.com/rancher/cli/releases/download/v2.10.1/rancher-linux-amd64-v2.10.1.tar.gz
 RUN tar -xzf rancher-linux-amd64-v*.tar.gz
 RUN rm -f rancher-linux-amd64-v*.tar.gz
-RUN ln -s /cli/rancher-v2.7.0/rancher /usr/bin/rancher
-RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
+RUN ln -s /cli/rancher-v2.10.1/rancher /usr/bin/rancher
+# https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg
+RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+RUN chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+RUN echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+RUN chmod 644 /etc/apt/sources.list.d/kubernetes.list
 RUN apt-get update && apt-get install -y kubectl
 
 # Clean up APT when done.
